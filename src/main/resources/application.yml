@@ -1,0 +1,9 @@
+micronaut:
+  server:
+    port: 17600
+  application:
+    name: lab1
+netty:
+  default:
+    allocator:
+      max-order: 3
