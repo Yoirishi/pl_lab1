@@ -1,13 +1,13 @@
 package po01.excelparser
 
-import decl.DisciplineRow
-import decl.StudentRow
+import po01.decl.DisciplineRow
+import po01.decl.StudentRow
 import jakarta.inject.Singleton
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.WorkbookFactory
-import structures.Discipline
-import structures.GradeControl
-import structures.Student
+import po01.structures.Discipline
+import po01.structures.GradeControl
+import po01.structures.Student
 import java.io.File
 import java.io.InputStream
 

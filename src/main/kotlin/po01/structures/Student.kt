@@ -1,4 +1,4 @@
-package structures
+package po01.structures
 
 class Student(
     val name: String,

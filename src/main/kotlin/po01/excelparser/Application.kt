@@ -22,7 +22,7 @@ fun main(args: Array<String>) {
 	val workplan = workPlanParser.parse(wpPath)
 
 
-	val tableBuilder = context.getBean(WordDocumentTableBuilder::class.java)
+	val tableBuilder = context.getBean(DocXTableBuilder::class.java)
 
 	tableBuilder.build(gradeControls, workplan)
 

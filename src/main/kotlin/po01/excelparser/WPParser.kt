@@ -3,9 +3,9 @@ package po01.excelparser
 import jakarta.inject.Singleton
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.WorkbookFactory
-import structures.WPDiscipline
-import structures.WPSemester
-import structures.WorkPlan
+import po01.structures.WPDiscipline
+import po01.structures.WPSemester
+import po01.structures.WorkPlan
 import java.io.File
 import java.io.InputStream
 
@@ -32,6 +32,8 @@ class WPParser {
 
             var inputString = ""
 
+            var isDisciplineForStudentChoice = false
+
             while(cellIterator.hasNext()) {
                 val cell = cellIterator.next()
                 when (cell.cellType) {
@@ -39,10 +41,15 @@ class WPParser {
                     CellType.NUMERIC -> {}
                     CellType.STRING -> {
                         val value = cell.stringCellValue
+
+                        if (value.startsWith("$")) isDisciplineForStudentChoice = true
+
                         if (!value.matches(regexpOfDisciplineMeta) && !value.startsWith("$")) {
                             inputString += value
                             inputString += "\t"
                         }
+
+
                         if (value.contains("Семестр")) break
                     }
                     CellType.FORMULA -> {}
@@ -52,36 +59,29 @@ class WPParser {
                 }
 
             }
+
             val disciplineRawInfo = inputString.split("Семестр")
             val title = disciplineRawInfo[0]
+
             for  (i in 1 until disciplineRawInfo.size) {
                 val disciplineBySemesterInfo = disciplineRawInfo[i]
 
                 val matchedResult = regexpOfDisciplineDescription.find(disciplineBySemesterInfo)
 
                 matchedResult?.let {
-                    val (semesterNumber, workHourQuantity, gradeForms) = it.destructured
-                    val splitGradeForms = gradeForms.split(", ")
+                    val (semesterNumber, workHourQuantity, gradeForm) = it.destructured
 
                     while (workPlan.semesters.size < semesterNumber.toInt()) {
                         workPlan.semesters.add(WPSemester(hashMapOf()))
                     }
-                    for (gradeForm in splitGradeForms)
-                    {
-                        if (!gradeForm.contains("Курсо"))
-                        {
-                            workPlan.semesters[(semesterNumber.toInt() - 1)]
-                                .disciplines.set(
-                                    title,
-                                    WPDiscipline(
-                                        title,
-                                        workHourQuantity.toDouble(),
-                                        (workHourQuantity.toDouble()/36),
-                                        gradeForm
-                                    )
-                                )
-                        }
-                    }
+                    workPlan.semesters[(semesterNumber.toInt() - 1)]
+                        .disciplines[title] = WPDiscipline(
+                        title,
+                        workHourQuantity.toDouble(),
+                        (workHourQuantity.toDouble()/36),
+                        gradeForm,
+                        isDisciplineForStudentChoice
+                    )
                 }
             }
         }

@@ -1,4 +1,4 @@
-package structures
+package po01.structures
 
 class GradeControl(
     val student: Student,

@@ -1,4 +1,4 @@
-package decl
+package po01.decl
 
 class WordRowToInsert(
     val wpDisciplineTitle: String,

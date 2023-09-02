@@ -1,13 +1,13 @@
 package po01.excelparser
 
-import decl.WordRowToInsert
+import po01.decl.WordRowToInsert
 import jakarta.inject.Singleton
-import structures.GradeControl
-import structures.WPDiscipline
+import po01.structures.GradeControl
+import po01.structures.WPDiscipline
 
 
 @Singleton
-class WordRowBuilder {
+class DocXRowBuilder {
 
     val regexpToGetSemester = """\W*(\d*)""".toRegex()
 
@@ -56,17 +56,22 @@ class WordRowBuilder {
                         )
                     }
                 }
-                return WordRowToInsert(
-                    discipline.title,
-                    semesterNumber.toString(),
-                    discipline.creditHourQuantity.toString(),
-                    discipline.gradeForm,
-                    "",
-                    "",
-                    "",
-                    "",
-                    ""
-                )
+                return if (!discipline.isDisciplineForStudentChoice) {
+                    WordRowToInsert(
+                        discipline.title,
+                        semesterNumber.toString(),
+                        discipline.creditHourQuantity.toString(),
+                        discipline.gradeForm,
+                        "",
+                        "",
+                        "",
+                        "",
+                        ""
+                    )
+                } else {
+                    null
+                }
+
             }
         }
         return null
