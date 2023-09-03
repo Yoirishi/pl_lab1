@@ -22,7 +22,7 @@ class DocXTableBuilder(
 ) {
     private val startIndex = 17
 
-    fun build(gradeControls: MutableList<GradeControl>, workPlan: WorkPlan)
+    fun build(gradeControls: MutableList<GradeControl>, workPlan: WorkPlan, outputFolderPath: String)
     {
         val templateFileStream = object {}.javaClass.getResourceAsStream("/template.docx")
         val doc = XWPFDocument(templateFileStream)
@@ -190,8 +190,12 @@ class DocXTableBuilder(
             rowIndex++
         }
 
-
-        val out = FileOutputStream("${gradeControls[0].student.name} - ${gradeControls[0].student.group}.docx")
+        val finalOutputFolder = if (outputFolderPath.endsWith("/")) {
+            outputFolderPath.substring(0, outputFolderPath.length-2)
+        } else {
+            outputFolderPath
+        }
+        val out = FileOutputStream("${finalOutputFolder}/${gradeControls[0].student.name} - ${gradeControls[0].student.group}.docx")
         doc.write(out)
         out.close()
         templateFileStream?.close()

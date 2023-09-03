@@ -4,6 +4,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.allopen") version "1.6.21"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("io.micronaut.application") version "3.7.10"
+    id("org.openjfx.javafxplugin") version "0.0.9"
 }
 
 version = "0.1"
@@ -25,6 +26,10 @@ dependencies {
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.apache.poi:poi:4.1.2")
     implementation("org.apache.poi:poi-ooxml:4.1.2")
+    implementation("org.openjfx:javafx-base:16")
+    implementation("org.openjfx:javafx-controls:16")
+    implementation("org.openjfx:javafx-graphics:16")
+    implementation("org.openjfx:javafx-fxml:16")
 }
 
 
@@ -47,7 +52,9 @@ tasks {
         }
     }
 }
+
 graalvmNative.toolchainDetection = false
+
 micronaut {
     runtime("netty")
     testRuntime("junit5")
@@ -57,5 +64,15 @@ micronaut {
     }
 }
 
+javafx {
+    version = "17"
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
 
-
+task nativeImage(type: Exec) {
+    doFirst {
+        exec {
+            commandLine 'native-image', '--no-fallback', '--class-path', configurations.runtimeClasspath.asPath, 'po01.excelparser.ApplicationKt'
+        }
+    }
+}
