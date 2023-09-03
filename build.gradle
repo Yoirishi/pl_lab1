@@ -68,11 +68,3 @@ javafx {
     version = "17"
     modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
-
-task nativeImage(type: Exec) {
-    doFirst {
-        exec {
-            commandLine 'native-image', '--no-fallback', '--class-path', configurations.runtimeClasspath.asPath, 'po01.excelparser.ApplicationKt'
-        }
-    }
-}
