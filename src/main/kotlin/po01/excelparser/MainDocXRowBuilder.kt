@@ -7,7 +7,7 @@ import po01.structures.validators.CourseWorkIsProjectValidator
 
 
 @Singleton
-class DocXRowBuilder(
+class MainDocXRowBuilder(
     private val courseWorkIsProjectValidator: CourseWorkIsProjectValidator
 ) {
 

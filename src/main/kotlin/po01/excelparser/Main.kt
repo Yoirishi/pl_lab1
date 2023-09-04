@@ -22,6 +22,7 @@ class Main : Application() {
         }
 
         primaryStage?.scene = scene
+        primaryStage?.isResizable = false
         primaryStage?.show()
     }
 }

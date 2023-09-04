@@ -3,6 +3,7 @@ package po01.excelparser
 import jakarta.inject.Singleton
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment
 import org.apache.poi.xwpf.usermodel.XWPFDocument
+import org.apache.poi.xwpf.usermodel.XWPFTableCell
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber
 import po01.structures.GradeControl
 import po01.structures.WPDiscipline
@@ -15,20 +16,21 @@ import java.lang.Exception
 import java.math.BigInteger
 
 @Singleton
-class DocXTableBuilder(
-    private val wordRowBuilder: DocXRowBuilder,
+class MainDocXTableBuilder(
+    private val wordRowBuilder: MainDocXRowBuilder,
     private val gradeResultValidator: GradeResultValidator,
     private val disciplineNotFacultativeValidator: DisciplineNotFacultativeValidator,
-    private val creditHoursValidator: CreditHoursValidator
+    private val creditHoursValidator: CreditHoursValidator,
+    private val programDifferenceDocXBuilder: ProgramDifferenceDocXBuilder
 ) {
     private val startIndex = 17
 
     fun build(gradeControls: MutableList<GradeControl>, workPlan: WorkPlan, outputFolderPath: String)
     {
-        val templateFileStream = object {}.javaClass.getResourceAsStream("/template.docx")
-        val doc = XWPFDocument(templateFileStream)
+        val mainTemplateFileStream = object {}.javaClass.getResourceAsStream("/mainTemplate.docx")
+        val mainDoc = XWPFDocument(mainTemplateFileStream)
 
-        val table = doc.tables[0]
+        val table = mainDoc.tables[0]
 
         var rowIndex = startIndex //index of row in table to insert parsed data
 
@@ -68,6 +70,7 @@ class DocXTableBuilder(
                     val newRow = table.insertNewTableRow(rowIndex)
                     for (col in 0 until 9) {
                         val newCell = newRow.createCell()
+                        newCell.verticalAlignment = XWPFTableCell.XWPFVertAlign.CENTER
                         val paragraph = newCell.addParagraph()
                         val run = paragraph.createRun()
                         newCell.removeParagraph(0)
@@ -196,15 +199,25 @@ class DocXTableBuilder(
             rowIndex++
         }
 
+        val programDifferenceDoc = programDifferenceDocXBuilder.build(gradeControls[0].student.name, disciplinesProgramDifference)
+
         val finalOutputFolder = if (outputFolderPath.endsWith("/")) {
             outputFolderPath.substring(0, outputFolderPath.length-2)
         } else {
             outputFolderPath
         }
-        val out = FileOutputStream("${finalOutputFolder}/${gradeControls[0].student.name} - ${gradeControls[0].student.group}.docx")
-        doc.write(out)
-        out.close()
-        templateFileStream?.close()
-        doc.close()
+        val mainOut = FileOutputStream("${finalOutputFolder}/${gradeControls[0].student.name} - ${gradeControls[0].student.group}.docx")
+        mainDoc.write(mainOut)
+        mainOut.close()
+
+        val splitStudentName = gradeControls[0].student.name.split(" ")
+        val pdOut = FileOutputStream("${finalOutputFolder}/Аннотированный ИУП ${splitStudentName[0]}.docx")
+        programDifferenceDoc.write(pdOut)
+        pdOut.close()
+
+        mainTemplateFileStream?.close()
+        mainDoc.close()
+
+        programDifferenceDoc.close()
     }
 }

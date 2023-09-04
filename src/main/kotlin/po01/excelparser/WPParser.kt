@@ -82,7 +82,8 @@ class WPParser {
                             (workHourQuantity.toDouble()/36),
                             gradeForm,
                             isDisciplineForStudentChoice,
-                            false
+                            false,
+                            semesterNumber.toInt()
                         )
                     } ?: run {
                         val matchedPracticeResult = regexpOfPracticeDescription.find(disciplineBySemesterInfo)
@@ -99,7 +100,8 @@ class WPParser {
                                 (workHourQuantity.toDouble()/36),
                                 "",
                                 isDisciplineForStudentChoice,
-                                true
+                                true,
+                                semesterNumber.toInt()
                             )
                         }
                     }

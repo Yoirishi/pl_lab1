@@ -6,7 +6,7 @@ import jakarta.inject.Singleton
 class ExcelParser(
     private val studentParser: StudentParser,
     private val wpParser: WPParser,
-    private val tableBuilder: DocXTableBuilder
+    private val tableBuilder: MainDocXTableBuilder
 ) {
     fun start(gcPath: String, planPaths: Collection<String>, outputFolder: String) {
         val gradeControls = studentParser.parse(gcPath)
