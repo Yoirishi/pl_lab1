@@ -12,76 +12,97 @@ import java.io.InputStream
 @Singleton
 class WPParser {
     val regexpOfDiscipline = """(\W*)(Семестр\s\d, \d*\s[^,:;.]*,\s[^,:;.]*:\s\W*)""".toRegex()
-    val regexpOfDisciplineMeta = """^([А-Я.,-:;]*\d).*""".toRegex()
-    val regexpOfDisciplineDescription = """(\d), (\d*) часов, отчетность: (\W*)""".toRegex()
+    private val regexpOfDisciplineMeta = """^([А-Я.,-:;]*\d).*""".toRegex()
+    private val regexpOfDisciplineDescription = """(\d), (\d*) часов, отчетность: (\W*)""".toRegex()
+    private val regexpOfPracticeDescription = """(\d), (\d*) часов""".toRegex()
 
-    fun parse(pathToFile: String): WorkPlan {
+    fun parse(pathsToFile: Collection<String>): WorkPlan {
         val workPlan = WorkPlan(mutableListOf())
 
+        pathsToFile.forEach {pathToFile ->
+            val inputStream: InputStream = File(pathToFile).inputStream()
+            val workbook = WorkbookFactory.create(inputStream)
+            val sheet = workbook.getSheetAt(0)
+            val rowIterator = sheet.iterator()
 
-        val inputStream: InputStream = File(pathToFile).inputStream()
-        val workbook = WorkbookFactory.create(inputStream)
-        val sheet = workbook.getSheetAt(0)
-        val rowIterator = sheet.iterator()
+            rowIterator.next() //skip first row with metadata information
 
-        rowIterator.next() //skip first row with metadata information
+            while (rowIterator.hasNext()) {
+                val row = rowIterator.next()
+                val cellIterator = row.cellIterator()
 
-        while (rowIterator.hasNext()) {
-            val row = rowIterator.next()
-            val cellIterator = row.cellIterator()
+                var inputString = ""
 
-            var inputString = ""
+                var isDisciplineForStudentChoice = false
 
-            var isDisciplineForStudentChoice = false
+                while(cellIterator.hasNext()) {
+                    val cell = cellIterator.next()
+                    when (cell.cellType) {
+                        CellType._NONE -> {}
+                        CellType.NUMERIC -> {}
+                        CellType.STRING -> {
+                            val value = cell.stringCellValue
 
-            while(cellIterator.hasNext()) {
-                val cell = cellIterator.next()
-                when (cell.cellType) {
-                    CellType._NONE -> {}
-                    CellType.NUMERIC -> {}
-                    CellType.STRING -> {
-                        val value = cell.stringCellValue
+                            if (value.startsWith("$")) isDisciplineForStudentChoice = true
 
-                        if (value.startsWith("$")) isDisciplineForStudentChoice = true
+                            if (!value.matches(regexpOfDisciplineMeta) && !value.startsWith("$")) {
+                                inputString += value
+                                inputString += "\t"
+                            }
 
-                        if (!value.matches(regexpOfDisciplineMeta) && !value.startsWith("$")) {
-                            inputString += value
-                            inputString += "\t"
+
+                            if (value.contains("Семестр")) break
                         }
-
-
-                        if (value.contains("Семестр")) break
+                        CellType.FORMULA -> {}
+                        CellType.BLANK -> {}
+                        CellType.BOOLEAN -> {}
+                        CellType.ERROR -> {}
                     }
-                    CellType.FORMULA -> {}
-                    CellType.BLANK -> {}
-                    CellType.BOOLEAN -> {}
-                    CellType.ERROR -> {}
+
                 }
 
-            }
+                val disciplineRawInfo = inputString.split("Семестр")
+                val title = disciplineRawInfo[0]
 
-            val disciplineRawInfo = inputString.split("Семестр")
-            val title = disciplineRawInfo[0]
+                for  (i in 1 until disciplineRawInfo.size) {
+                    val disciplineBySemesterInfo = disciplineRawInfo[i]
 
-            for  (i in 1 until disciplineRawInfo.size) {
-                val disciplineBySemesterInfo = disciplineRawInfo[i]
+                    val matchedDisciplineResult = regexpOfDisciplineDescription.find(disciplineBySemesterInfo)
 
-                val matchedResult = regexpOfDisciplineDescription.find(disciplineBySemesterInfo)
+                    matchedDisciplineResult?.let {
+                        val (semesterNumber, workHourQuantity, gradeForm) = it.destructured
 
-                matchedResult?.let {
-                    val (semesterNumber, workHourQuantity, gradeForm) = it.destructured
+                        while (workPlan.semesters.size < semesterNumber.toInt()) {
+                            workPlan.semesters.add(WPSemester(hashMapOf()))
+                        }
+                        workPlan.semesters[(semesterNumber.toInt() - 1)]
+                            .disciplines[title] = WPDiscipline(
+                            title,
+                            workHourQuantity.toDouble(),
+                            (workHourQuantity.toDouble()/36),
+                            gradeForm,
+                            isDisciplineForStudentChoice,
+                            false
+                        )
+                    } ?: run {
+                        val matchedPracticeResult = regexpOfPracticeDescription.find(disciplineBySemesterInfo)
+                        matchedPracticeResult?.let {
+                            val (semesterNumber, workHourQuantity) = it.destructured
 
-                    while (workPlan.semesters.size < semesterNumber.toInt()) {
-                        workPlan.semesters.add(WPSemester(hashMapOf()))
+                            while (workPlan.semesters.size < semesterNumber.toInt()) {
+                                workPlan.semesters.add(WPSemester(hashMapOf()))
+                            }
+                            workPlan.semesters[(semesterNumber.toInt() - 1)]
+                                .disciplines[title] = WPDiscipline(
+                                title,
+                                workHourQuantity.toDouble(),
+                                (workHourQuantity.toDouble()/36),
+                                "",
+                                isDisciplineForStudentChoice,
+                                true
+                            )
+                        }
                     }
-                    workPlan.semesters[(semesterNumber.toInt() - 1)]
-                        .disciplines[title] = WPDiscipline(
-                        title,
-                        workHourQuantity.toDouble(),
-                        (workHourQuantity.toDouble()/36),
-                        gradeForm,
-                        isDisciplineForStudentChoice
-                    )
                 }
             }
         }

@@ -1,20 +1,20 @@
 package po01.excelparser
 
-import po01.decl.DisciplineRow
 import po01.decl.StudentRow
 import jakarta.inject.Singleton
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.WorkbookFactory
-import po01.structures.Discipline
-import po01.structures.GradeControl
-import po01.structures.Student
+import po01.decl.DisciplineRow
+import po01.decl.DisciplineType
+import po01.structures.*
 import java.io.File
 import java.io.InputStream
 
 @Singleton
 class StudentParser(
-    private val disciplineRow: DisciplineRow,
-    private val studentRow: StudentRow
+    private val disciplineRows: Collection<DisciplineRow>,
+    private val studentRow: StudentRow,
+    private val differentialTestChecker: DifferentialTestChecker
 ) {
     fun parse(pathToFile: String): MutableList<GradeControl> {
 
@@ -41,16 +41,61 @@ class StudentParser(
                 val student = Student(name, group, semester)
                 gradeControls.add(GradeControl(student, mutableListOf()))
 
-            } else if (compareLists(plan, disciplineRow.getStructure()))
-            {
-                val title = cellIterator.next().stringCellValue
-                val workHourQuantity = cellIterator.next().numericCellValue
-                cellIterator.next()
-                val creditHourQuantity = (workHourQuantity/36)
-                val grade = cellIterator.next().stringCellValue
+            } else {
+                disciplineRows.forEach { row ->
+                    if (compareLists(plan, row.getStructure()))
+                    {
+                        val title = cellIterator.next().stringCellValue
+                        val workHourQuantity = cellIterator.next().numericCellValue
+                        cellIterator.next()
+                        val creditHourQuantity = (workHourQuantity/36)
 
-                gradeControls[gradeControls.size-1].disciplines.add(Discipline(title, workHourQuantity, creditHourQuantity, grade))
-            } else throw Exception("Unknown data")
+                        when (row.getType()) {
+                            DisciplineType.EXAM,
+                            DisciplineType.TEST -> {
+                                val cell = cellIterator.next()
+                                val grade = when (cell.columnIndex)
+                                {
+                                    4 -> ExamGrade(cell.stringCellValue)
+                                    5 -> {
+                                        val gradeResult = cell.stringCellValue
+                                        val isTestDifferential = differentialTestChecker.checkIsTestDifferential(gradeResult)
+                                        if (isTestDifferential) {
+                                            DifferentialTestGrade(gradeResult)
+                                        } else {
+                                            TestGrade(gradeResult)
+                                        }
+                                    }
+                                    else -> throw Exception("Unknown grade type in student grade control list: grade column index is ${cell.columnIndex}")
+                                }
+
+                                gradeControls[gradeControls.size-1].disciplines.add(Discipline(title, workHourQuantity, creditHourQuantity, grade))
+                            }
+                            DisciplineType.WITH_COURSE_WORK -> {
+                                val firstCell = cellIterator.next()
+                                val secondCell = cellIterator.next()
+
+                                val grade = when (firstCell.columnIndex)
+                                {
+                                    4 -> ExamWithCWGrades(firstCell.stringCellValue, secondCell.stringCellValue)
+                                    5 -> {
+                                        val gradeResult = firstCell.stringCellValue
+                                        val isTestDifferential = differentialTestChecker.checkIsTestDifferential(gradeResult)
+                                        if (isTestDifferential) {
+                                            DifferentialTestWithCWGrades(gradeResult, secondCell.stringCellValue)
+                                        } else {
+                                            TestWithCWGrades(gradeResult, secondCell.stringCellValue)
+                                        }
+                                    }
+                                    else -> throw Exception("Unknown grade type in student grade control list: grade column index is ${firstCell.columnIndex}")
+                                }
+
+                                gradeControls[gradeControls.size-1].disciplines.add(Discipline(title, workHourQuantity, creditHourQuantity, grade))
+                            }
+                        }
+                    }
+                }
+            }
         }
         workbook.close()
 

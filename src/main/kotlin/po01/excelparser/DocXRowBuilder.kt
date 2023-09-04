@@ -2,14 +2,16 @@ package po01.excelparser
 
 import po01.decl.WordRowToInsert
 import jakarta.inject.Singleton
-import po01.structures.GradeControl
-import po01.structures.WPDiscipline
+import po01.structures.*
+import po01.structures.validators.CourseWorkIsProjectValidator
 
 
 @Singleton
-class DocXRowBuilder {
+class DocXRowBuilder(
+    private val courseWorkIsProjectValidator: CourseWorkIsProjectValidator
+) {
 
-    val regexpToGetSemester = """\W*(\d*)""".toRegex()
+    private val regexpToGetSemester = """\W*(\d*)""".toRegex()
 
 
     fun build(
@@ -30,17 +32,68 @@ class DocXRowBuilder {
                 for (gcDiscipline in gradeControl.disciplines) {
                     if (gcDiscipline.title == discipline.title.trim())
                     {
-                        val finalGrade = if ((discipline.creditHourQuantity * 2)/3 <= gcDiscipline.creditHourQuantity ) {
-                            gcDiscipline.grade
-                        } else {
-                            ""
+                        val isGradeFormWithProject = courseWorkIsProjectValidator.validate(discipline.gradeForm)
+                        val gcGradeType = when (gcDiscipline.grade) {
+                            is DifferentialTestGrade,
+                            is ExamGrade,
+                            is TestGrade -> {
+                                when (gcDiscipline.grade.gradeType) {
+                                    GradeType.EXAM -> "Экзамен"
+                                    GradeType.TEST -> "Зачет"
+                                    GradeType.DIFFERENTIAL_TEST -> "Дифференцированный зачет"
+                                    GradeType.COURSE_WORK -> throw Exception("Cant handle discipline ${gcDiscipline.title}")
+                                }
+                            }
+                            is ExamWithCWGrades,
+                            is DifferentialTestWithCWGrades,
+                            is TestWithCWGrades -> {
+                                when (gcDiscipline.grade.gradeType) {
+                                    GradeType.EXAM -> {
+                                        if (isGradeFormWithProject) {
+                                            "Экзамен, Курсовой проект"
+                                        } else {
+                                            "Экзамен, Курсовая работа"
+                                        }
+                                    }
+                                    GradeType.TEST -> {
+                                        if (isGradeFormWithProject) {
+                                            "Зачет, Курсовой проект"
+                                        } else {
+                                            "Зачет, Курсовая работа"
+                                        }
+                                    }
+                                    GradeType.DIFFERENTIAL_TEST -> {
+                                        if (isGradeFormWithProject) {
+                                            "Дифференцированный зачет, Курсовой проект"
+                                        } else {
+                                            "Дифференцированный зачет, Курсовая работа"
+                                        }
+                                    }
+                                    GradeType.COURSE_WORK -> throw Exception("Cant handle discipline ${gcDiscipline.title}")
+                                }
+                            }
                         }
 
-                        val gcGradeType = if (gcDiscipline.grade == "зачет" || gcDiscipline.grade == "незачет")
-                        {
-                            "Зачет"
+                        val gcGrade = when (gcDiscipline.grade) {
+                            is DifferentialTestGrade -> gcDiscipline.grade.gradeResult
+                            is ExamGrade -> gcDiscipline.grade.gradeResult
+                            is TestGrade -> gcDiscipline.grade.gradeResult
+                            is ExamWithCWGrades -> "${gcDiscipline.grade.gradeResult}, ${gcDiscipline.grade.cwGradeResult}"
+                            is DifferentialTestWithCWGrades -> "${gcDiscipline.grade.gradeResult}, ${gcDiscipline.grade.cwGradeResult}"
+                            is TestWithCWGrades -> "${gcDiscipline.grade.gradeResult}, ${gcDiscipline.grade.cwGradeResult}"
+                        }
+
+                        val finalGrade = if ((discipline.creditHourQuantity * 2)/3 <= gcDiscipline.creditHourQuantity ) {
+                            when (gcDiscipline.grade) {
+                                is DifferentialTestGrade -> gcDiscipline.grade.gradeResult
+                                is DifferentialTestWithCWGrades -> gcDiscipline.grade.gradeResult
+                                is ExamGrade -> gcDiscipline.grade.gradeResult
+                                is ExamWithCWGrades -> gcDiscipline.grade.gradeResult
+                                is TestGrade -> gcDiscipline.grade.gradeResult
+                                is TestWithCWGrades -> gcDiscipline.grade.gradeResult
+                            }
                         } else {
-                            discipline.gradeForm
+                            ""
                         }
 
                         return WordRowToInsert(
@@ -51,7 +104,7 @@ class DocXRowBuilder {
                             gcDiscipline.title,
                             gcDiscipline.creditHourQuantity.toInt().toString(),
                             gcGradeType,
-                            gcDiscipline.grade,
+                            gcGrade,
                             finalGrade
                         )
                     }
@@ -60,7 +113,7 @@ class DocXRowBuilder {
                     WordRowToInsert(
                         discipline.title,
                         semesterNumber.toString(),
-                        discipline.creditHourQuantity.toString(),
+                        discipline.creditHourQuantity.toInt().toString(),
                         discipline.gradeForm,
                         "",
                         "",
@@ -71,7 +124,6 @@ class DocXRowBuilder {
                 } else {
                     null
                 }
-
             }
         }
         return null
@@ -80,6 +132,7 @@ class DocXRowBuilder {
     fun getMaxSemester(gradeControls: MutableList<GradeControl>): Int {
         var result = 0
         for (gradeControl in gradeControls) {
+            if (gradeControl.disciplines.size < 1) continue
             val matchResult = regexpToGetSemester.find(gradeControl.student.semester)
             matchResult?.let {
                 val (number) = it.destructured

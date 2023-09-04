@@ -5,5 +5,6 @@ class WPDiscipline(
     val workHourQuantity: Double,
     val creditHourQuantity: Double,
     val gradeForm: String,
-    val isDisciplineForStudentChoice: Boolean
+    val isDisciplineForStudentChoice: Boolean,
+    val isPractice: Boolean
 )

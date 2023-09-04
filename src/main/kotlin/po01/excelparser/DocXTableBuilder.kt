@@ -5,6 +5,7 @@ import org.apache.poi.xwpf.usermodel.ParagraphAlignment
 import org.apache.poi.xwpf.usermodel.XWPFDocument
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber
 import po01.structures.GradeControl
+import po01.structures.WPDiscipline
 import po01.structures.validators.GradeResultValidator
 import po01.structures.WorkPlan
 import po01.structures.validators.CreditHoursValidator
@@ -35,6 +36,9 @@ class DocXTableBuilder(
 
         val creditHoursBySemesterNumberInGc: MutableList<Int> = mutableListOf()
         val creditHoursBySemesterNumberInWp: MutableList<Int> = mutableListOf()
+
+
+        val disciplinesProgramDifference: MutableList<WPDiscipline> = mutableListOf()
 
 
         for (semesterNumber in 0 until upToSemester) {
@@ -123,6 +127,8 @@ class DocXTableBuilder(
 
                     if (gradeResultValidator.validate(wordRowToInsert.gcGradeResult) && isGcCreditHourQuantityValid) {
                         creditHoursBySemesterNumberInGc[semesterNumber] += wordRowToInsert.gcCreditHourQuantity.toInt()
+                    } else {
+                        disciplinesProgramDifference.add(discipline.value)
                     }
                     if (isWpCreditHourQuantityValid) {
                         creditHoursBySemesterNumberInWp[semesterNumber] += wordRowToInsert.wpCreditHourQuantity.toInt()

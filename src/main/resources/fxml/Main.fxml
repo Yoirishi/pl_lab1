@@ -38,13 +38,27 @@
 <?import po01.excelparser.controllers.FilePickerController?>
 <?import po01.excelparser.controllers.DirectoryPickerController?>
 
+<?import javafx.scene.control.CheckBox?>
 <VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="po01.excelparser.controllers.MainController">
   <children>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
          <children>
-             <FilePickerController layoutX="23.0" layoutY="76.0" fx:id="gcPicker" />
-             <FilePickerController layoutX="23.0" layoutY="134.0" fx:id="wpPicker" />
-             <DirectoryPickerController layoutX="23.0" layoutY="192.0" fx:id="outputDirectory" />
+             <FilePickerController layoutX="23.0" layoutY="26.0" fx:id="gcPicker" />
+             <FilePickerController layoutX="23.0" layoutY="86.0" fx:id="wpPicker" />
+             <FilePickerController layoutX="23.0" layoutY="146.0" fx:id="practicePicker" />
+             <DirectoryPickerController layoutX="23.0" layoutY="206.0" fx:id="outputDirectory" />
+             <CheckBox
+                     fx:id="parsePracticeWithMainWPCheckbox"
+                     text="Использовать основной учебный план для сопоставления практики"
+                     layoutX="23.0"
+                     layoutY="307.0"
+             />
+             <CheckBox
+                     fx:id="openDirectoryAfterGeneratingCheckbox"
+                     text="Открыть папку после генерации для просмотра файлов"
+                     layoutX="23.0"
+                     layoutY="337.0"
+             />
              <Button layoutX="453.0"
                      layoutY="307.0"
                      mnemonicParsing="false"

@@ -14,6 +14,10 @@ import java.nio.file.Paths
 import kotlin.io.path.absolutePathString
 
 class FilePickerController : HBox() {
+    private var fileChooserTitle: String = ""
+    private lateinit var allowedExtensions: Array<out String>
+    private lateinit var extTitleInFileChooser: String
+
     @FXML
     private lateinit var filePathTextField: TextField
 
@@ -40,6 +44,7 @@ class FilePickerController : HBox() {
     fun initialize() {
         selectButton.setOnAction {
             val fileChooser = FileChooser()
+            fileChooser.title = this.fileChooserTitle
             lastDirectory?.let { fileChooser.initialDirectory = it.toFile() }
             val selectedFile: File? = try {
                 fileChooser.showOpenDialog(null)
@@ -79,4 +84,15 @@ class FilePickerController : HBox() {
         val event = FilePickerEvent(FilePickerEvent.FILE_SELECTED, filePath, fileDirectory)
         fireEvent(event)
     }
+
+    fun setAllowedExtensionsToPick(extTitle: String, vararg extensions: String) {
+        extensions.forEach { ext ->
+            if (!ext.startsWith(".")) throw Exception("Wrong extension for file picker: $ext")
+        }
+        this.extTitleInFileChooser = extTitle
+        this.allowedExtensions = extensions
+    }
+
+    fun setFileChooserTitle(newTitle: String) { this.fileChooserTitle = newTitle }
+
 }
