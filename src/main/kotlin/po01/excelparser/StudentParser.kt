@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import po01.decl.DisciplineRow
 import po01.decl.DisciplineType
+import po01.decl.PracticalDisciplineRow
 import po01.structures.*
 import java.io.File
 import java.io.InputStream
@@ -16,6 +17,7 @@ class StudentParser(
     private val studentRow: StudentRow,
     private val differentialTestChecker: DifferentialTestChecker
 ) {
+    private val regexpOfElectiveDescription = """.*элективная.*""".toRegex()
     fun parse(pathToFile: String): MutableList<GradeControl> {
 
 
@@ -46,9 +48,19 @@ class StudentParser(
                     if (compareLists(plan, row.getStructure()))
                     {
                         val title = cellIterator.next().stringCellValue
-                        val workHourQuantity = cellIterator.next().numericCellValue
+                        val workHourQuantity = when(row)
+                        {
+                            is PracticalDisciplineRow -> {
+                                cellIterator.next().stringCellValue.toDouble()
+                            }
+
+                            else -> {
+                                cellIterator.next().numericCellValue
+                            }
+                        }
                         cellIterator.next()
-                        val creditHourQuantity = (workHourQuantity/36)
+
+                        val creditHourQuantity =  if(title.matches(regexpOfElectiveDescription)) 0.0 else (workHourQuantity/36)
 
                         when (row.getType()) {
                             DisciplineType.EXAM,
