@@ -3,7 +3,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="po01.excelparser.controllers.ProtocolSettingsController">
    <children>
       <VBox layoutX="36.0" layoutY="30.0" prefHeight="30.0" prefWidth="506.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
