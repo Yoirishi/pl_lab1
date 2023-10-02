@@ -18,6 +18,12 @@ class SettingsManager {
     private var openDirectoryAfterGeneratingCheckboxValue: String? = null
     private val settingsFile = File("settings.ini")
 
+    private var facultyTitle: String? = null
+    private var committeeChairmanPosition: String? = null
+    private var commissioner1Position: String? = null
+    private var commissioner2Position: String? = null
+
+
     init {
         try {
             if (!settingsFile.exists()) {
@@ -31,6 +37,11 @@ class SettingsManager {
             lastGcDirectory = properties.getProperty("lastGcDirectory")
             parsePracticeWithMainWPCheckboxValue = properties.getProperty("parsePracticeWithMainWPCheckboxValue")
             openDirectoryAfterGeneratingCheckboxValue = properties.getProperty("openDirectoryAfterGeneratingCheckboxValue")
+
+            facultyTitle = properties.getProperty("facultyTitle")
+            committeeChairmanPosition = properties.getProperty("committeeChairmanPosition")
+            commissioner1Position = properties.getProperty("commissioner1Position")
+            commissioner2Position = properties.getProperty("commissioner2Position")
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -69,9 +80,15 @@ class SettingsManager {
         properties.setProperty("openDirectoryAfterGeneratingCheckboxValue", openDirectoryAfterGeneratingCheckboxValue ?: "")
         properties.setProperty("parsePracticeWithMainWPCheckboxValue", parsePracticeWithMainWPCheckboxValue ?: "")
 
+
+        properties.setProperty("facultyTitle", facultyTitle ?: "")
+        properties.setProperty("committeeChairmanPosition", committeeChairmanPosition ?: "")
+        properties.setProperty("commissioner1Position", commissioner1Position ?: "")
+        properties.setProperty("commissioner2Position", commissioner2Position ?: "")
+
         return try {
             FileOutputStream(settingsFile).use { fileOutputStream ->
-                properties.store(fileOutputStream, null)
+                properties.store(fileOutputStream, "DONT EDIT THIS FILE MANUALLY")
             }
             "Change saved"
         } catch (e: IOException) {
@@ -99,6 +116,38 @@ class SettingsManager {
 
     fun setLastPracticeTable(lastPracticeTable: String) {
         this.lastPracticeTable = lastPracticeTable
+        val result = saveSettings()
+        println(result)
+    }
+
+
+
+    fun getFacultyTitle(): String? = facultyTitle
+    fun getCommitteeChairmanPosition(): String? = committeeChairmanPosition
+    fun getCommissioner1Position(): String? = commissioner1Position
+    fun getCommissioner2Position(): String? = commissioner2Position
+
+
+    fun setFacultyTitle(facultyTitle: String) {
+        this.facultyTitle = facultyTitle
+        val result = saveSettings()
+        println(result)
+    }
+
+    fun setCommitteeChairmanPosition(committeeChairmanPosition: String) {
+        this.committeeChairmanPosition = committeeChairmanPosition
+        val result = saveSettings()
+        println(result)
+    }
+
+    fun setCommissioner1Position(commissioner1Position: String) {
+        this.commissioner1Position = commissioner1Position
+        val result = saveSettings()
+        println(result)
+    }
+
+    fun setCommissioner2Position(commissioner2Position: String) {
+        this.commissioner2Position = commissioner2Position
         val result = saveSettings()
         println(result)
     }

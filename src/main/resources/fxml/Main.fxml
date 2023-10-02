@@ -32,16 +32,10 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
-<?import po01.excelparser.controllers.DirectoryPickerController?>
-<?import po01.excelparser.controllers.FilePickerController?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import po01.excelparser.controllers.*?>
 
 <VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="po01.excelparser.controllers.MainController">
   <children>
@@ -50,10 +44,13 @@
             <MenuBar layoutX="41.0" layoutY="2.0" AnchorPane.bottomAnchor="375.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <menus>
                 <Menu mnemonicParsing="false" text="Файл" />
-                <Menu mnemonicParsing="false" text="Редактирование">
+                <Menu mnemonicParsing="false" text="Настройки">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="Настройки шаблона" />
-                    <MenuItem mnemonicParsing="false" text="Настройки генератора" />
+                    <MenuItem fx:id="disciplineDictionaryMenuItem" mnemonicParsing="false" text="Сопоставление дисциплин" />
+                        <MenuItem fx:id="disciplineDictionaryMenuItem1" mnemonicParsing="false" text="Настройки генератора" />
+                        <MenuItem fx:id="protocolSettingsMenuItem" mnemonicParsing="false" text="Настройки шаблона ПЗК" />
+                        <MenuItem mnemonicParsing="false" text="Настройки шаблона ИУП" />
+                    <MenuItem mnemonicParsing="false" text="Настройки шаблона приложения" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Помощь">
@@ -65,13 +62,25 @@
             </MenuBar>
             <AnchorPane layoutX="19.0" layoutY="47.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                <children>
-                   <FilePickerController fx:id="gcPicker" AnchorPane.leftAnchor="0.0" />
-                   <FilePickerController fx:id="wpPicker" layoutY="60.0" AnchorPane.leftAnchor="0.0" />
-                   <FilePickerController fx:id="practicePicker" layoutY="120.0" AnchorPane.leftAnchor="0.0" />
-                   <DirectoryPickerController fx:id="outputDirectory" layoutY="180.0" AnchorPane.leftAnchor="0.0" />
-                   <CheckBox fx:id="parsePracticeWithMainWPCheckbox" layoutY="281.0" text="Использовать основной учебный план для сопоставления практики" AnchorPane.leftAnchor="0.0" />
-                   <CheckBox fx:id="openDirectoryAfterGeneratingCheckbox" layoutY="311.0" text="Открыть папку после генерации для просмотра файлов" AnchorPane.leftAnchor="0.0" />
-                   <Button fx:id="generateButton" layoutX="430.0" layoutY="281.0" mnemonicParsing="false" prefHeight="58.0" prefWidth="173.0" text="Сгенерировать" AnchorPane.leftAnchor="430.0" />
+                   <FilePickerController fx:id="gcPicker" layoutX="30.0" prefHeight="42.0" prefWidth="251.0" AnchorPane.leftAnchor="20.0" />
+                   <FilePickerController fx:id="wpPicker" layoutX="30.0" layoutY="60.0" prefHeight="42.0" prefWidth="251.0" AnchorPane.leftAnchor="20.0" />
+                   <FilePickerController fx:id="practicePicker" layoutX="30.0" layoutY="120.0" prefHeight="42.0" prefWidth="251.0" AnchorPane.leftAnchor="20.0" />
+                   <DirectoryPickerController fx:id="outputDirectory" layoutX="30.0" layoutY="180.0" prefHeight="42.0" prefWidth="251.0" AnchorPane.leftAnchor="20.0" />
+                   <CheckBox fx:id="parsePracticeWithMainWPCheckbox" layoutX="30.0" layoutY="281.0" prefHeight="17.0" prefWidth="407.0" text="Использовать основной учебный план для сопоставления практики" AnchorPane.leftAnchor="20.0" />
+                   <CheckBox fx:id="openDirectoryAfterGeneratingCheckbox" layoutX="30.0" layoutY="311.0" prefHeight="17.0" prefWidth="352.0" text="Открыть папку после генерации для просмотра файлов" AnchorPane.leftAnchor="20.0" />
+                   <Button fx:id="generateButton" layoutX="450.0" layoutY="281.0" mnemonicParsing="false" prefHeight="58.0" prefWidth="165.0" text="Сгенерировать" AnchorPane.leftAnchor="440.0" />
+                  <VBox layoutX="323.0" prefHeight="25.0" prefWidth="118.0">
+                     <children>
+                        <Label text="Курс" />
+                        <ComboBox fx:id="targetCourseComboBox" prefWidth="150.0" />
+                     </children>
+                  </VBox>
+                  <VBox layoutX="323.0" layoutY="60.0" prefHeight="25.0" prefWidth="118.0">
+                     <children>
+                        <Label text="Процесс" />
+                        <ComboBox fx:id="processComboBox" prefWidth="150.0" />
+                     </children>
+                  </VBox>
                </children>
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

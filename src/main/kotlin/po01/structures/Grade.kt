@@ -1,5 +1,7 @@
 package po01.structures
 
+import po01.excelparser.enums.GradeType
+
 sealed class Grade(
     val gradeType: GradeType
 )

@@ -1,7 +1,8 @@
 package po01.excelparser
 
-import po01.decl.WordRowToInsert
+import po01.docs.WordRowToInsert
 import jakarta.inject.Singleton
+import po01.excelparser.enums.GradeType
 import po01.structures.*
 import po01.structures.validators.CourseWorkIsProjectValidator
 

@@ -1,4 +1,4 @@
-package po01.structures
+package po01.excelparser.enums
 
 enum class GradeType {
     EXAM,

@@ -5,6 +5,8 @@ import org.apache.poi.xwpf.usermodel.ParagraphAlignment
 import org.apache.poi.xwpf.usermodel.XWPFDocument
 import org.apache.poi.xwpf.usermodel.XWPFTableCell
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber
+import po01.excelparser.enums.StudentProcess
+import po01.excelparser.enums.TargetCourse
 import po01.structures.GradeControl
 import po01.structures.WPDiscipline
 import po01.structures.validators.GradeResultValidator
@@ -18,6 +20,7 @@ import java.math.BigInteger
 @Singleton
 class MainDocXTableBuilder(
     private val wordRowBuilder: MainDocXRowBuilder,
+    private val documentRequisitesReplacer: DocumentRequisitesReplacer,
     private val gradeResultValidator: GradeResultValidator,
     private val disciplineNotFacultativeValidator: DisciplineNotFacultativeValidator,
     private val creditHoursValidator: CreditHoursValidator,
@@ -25,10 +28,19 @@ class MainDocXTableBuilder(
 ) {
     private val startIndex = 17
 
-    fun build(gradeControls: MutableList<GradeControl>, workPlan: WorkPlan, outputFolderPath: String)
+    fun build(
+        gradeControls: MutableList<GradeControl>,
+        workPlan: WorkPlan,
+        outputFolderPath: String,
+        processType: StudentProcess,
+        targetCourse: TargetCourse
+    )
     {
         val mainTemplateFileStream = object {}.javaClass.getResourceAsStream("/mainTemplate.docx")
         val mainDoc = XWPFDocument(mainTemplateFileStream)
+
+
+        documentRequisitesReplacer.replace(mainDoc, processType)
 
         val table = mainDoc.tables[0]
 

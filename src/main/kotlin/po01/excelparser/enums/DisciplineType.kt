@@ -1,4 +1,4 @@
-package po01.decl
+package po01.excelparser.enums
 
 enum class DisciplineType {
     EXAM,

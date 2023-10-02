@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="po01.excelparser.controllers.ProtocolSettingsController">
+   <children>
+      <VBox layoutX="36.0" layoutY="30.0" prefHeight="30.0" prefWidth="506.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+         <children>
+            <Label text="Название факультета" />
+            <TextField fx:id="facultyNameTextField" />
+         </children>
+      </VBox>
+      <VBox layoutX="36.0" layoutY="220.0" prefHeight="30.0" prefWidth="506.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+         <children>
+            <Label text="Должность члена комиссии 2" />
+            <TextField fx:id="commissioner2PositionTextField" />
+         </children>
+      </VBox>
+      <VBox layoutX="36.0" layoutY="158.0" prefHeight="30.0" prefWidth="506.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+         <children>
+            <Label text="Должность члена комиссии 1" />
+            <TextField fx:id="commissioner1PositionTextField" />
+         </children>
+      </VBox>
+      <VBox layoutX="36.0" layoutY="92.0" prefHeight="30.0" prefWidth="506.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+         <children>
+            <Label text="Должность председателя комиссии" />
+            <TextField fx:id="committeeChairmanPositionTextField" />
+         </children>
+      </VBox>
+      <HBox layoutX="354.0" layoutY="279.0" prefHeight="42.0" prefWidth="580.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+         <children>
+            <Button fx:id="cancelButton" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleClose" text="Отменить" HBox.hgrow="ALWAYS" />
+            <Region maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <Button fx:id="acceptButton" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleAccept" text="Принять" />
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>

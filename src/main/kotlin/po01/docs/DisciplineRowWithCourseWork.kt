@@ -1,7 +1,8 @@
-package po01.decl
+package po01.docs
 
 import jakarta.inject.Singleton
 import org.apache.poi.ss.usermodel.CellType
+import po01.excelparser.enums.DisciplineType
 
 @Singleton
 class DisciplineRowWithCourseWork : DisciplineRow {
