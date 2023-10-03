@@ -9,6 +9,7 @@ import javafx.scene.control.Button
 import javafx.scene.control.TextField
 import javafx.stage.Stage
 import po01.excelparser.SettingsManager
+import po01.excelparser.events.ControllerAcceptEvent
 import java.net.URL
 import java.util.*
 
@@ -44,11 +45,13 @@ class ProtocolSettingsController: Initializable {
 
     @FXML
     fun handleAccept(event: ActionEvent) {
-        val settingsManager = beanContext.getBean(SettingsManager::class.java)
-        settingsManager.setFacultyTitle(facultyNameTextField.text)
-        settingsManager.setCommitteeChairmanPosition(committeeChairmanPositionTextField.text)
-        settingsManager.setCommissioner1Position(commissioner1PositionTextField.text)
-        settingsManager.setCommissioner2Position(commissioner2PositionTextField.text)
+        val properties = HashMap<String, String>()
+        properties["facultyName"] = facultyNameTextField.text
+        properties["committeeChairmanPosition"] = committeeChairmanPositionTextField.text
+        properties["commissioner1Position"] = commissioner1PositionTextField.text
+        properties["commissioner2Position"] = commissioner2PositionTextField.text
+
+        acceptButton.fireEvent(ControllerAcceptEvent(this, properties))
         handleClose(event)
     }
 

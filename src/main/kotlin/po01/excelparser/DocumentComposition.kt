@@ -9,7 +9,7 @@ import po01.structures.Commissioner
 class DocumentComposition(
     private val settingsManager: SettingsManager
 ) {
-    val commissioners: List<Commissioner>
+    lateinit var commissioners: List<Commissioner>
     val facultyTemplateValue = "FTITLE"
     var facultyActualValue = settingsManager.getFacultyTitle() ?: "не указано"
 
@@ -20,7 +20,7 @@ class DocumentComposition(
 
     val processTypeTemplateValue = "PROCESSTYPE"
     val maxProcessTypeLength = 79
-    var processTypeActualValue = "что то пошло не так_________________________________________________"
+    var processTypeActualValue = "что то пошло не так"
 
     fun setProcessTypeActualValue(type: StudentProcess) {
         processTypeActualValue = when (type) {
@@ -31,6 +31,10 @@ class DocumentComposition(
     }
 
     init {
+        loadActualPropertiesFromSettings()
+    }
+
+    fun loadActualPropertiesFromSettings() {
         this.commissioners = listOf(
             Commissioner(
                 "COMITTECHAIRMAN",
@@ -45,6 +49,7 @@ class DocumentComposition(
                 settingsManager.getCommissioner2Position() ?: "не указано"
             )
         )
+        facultyActualValue = settingsManager.getFacultyTitle() ?: "не указано"
     }
 
 }

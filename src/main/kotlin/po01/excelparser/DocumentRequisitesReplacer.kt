@@ -11,6 +11,7 @@ class DocumentRequisitesReplacer(
 ) {
     fun replace(document: XWPFDocument, processType: StudentProcess, studentFullName: String) {
         documentComposition.setProcessTypeActualValue(processType)
+        documentComposition.loadActualPropertiesFromSettings()
         for (paragraph in document.paragraphs) {
             paragraph.runs.forEach { run ->
                 val text = run.text()

@@ -4,7 +4,6 @@ import io.micronaut.context.BeanContext
 import jakarta.inject.Singleton
 import javafx.application.Platform
 import javafx.collections.FXCollections
-import javafx.collections.ObservableList
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
@@ -22,6 +21,7 @@ import po01.excelparser.SettingsManager
 import po01.excelparser.StudentParser
 import po01.excelparser.enums.StudentProcess
 import po01.excelparser.enums.TargetCourse
+import po01.excelparser.events.ControllerAcceptEvent
 import po01.excelparser.events.DirectoryPickerEvent
 import po01.excelparser.events.FilePickerEvent
 import java.awt.Desktop
@@ -30,6 +30,7 @@ import java.io.IOException
 import java.lang.Exception
 import java.net.URL
 import java.util.*
+import kotlin.collections.HashMap
 
 
 @Singleton
@@ -200,7 +201,15 @@ class MainController: Initializable {
             }
         }
 
-        protocolSettingsMenuItem.setOnAction { openNewForm("/fxml/ProtocolSettings.fxml" ,"Protocol settings") }
+        protocolSettingsMenuItem.setOnAction {
+            openNewForm("/fxml/ProtocolSettings.fxml" ,"Настройки генерации протокола") { properties ->
+                val settingsManager = beanContext.getBean(SettingsManager::class.java)
+                settingsManager.setFacultyTitle(properties["facultyName"] ?: "")
+                settingsManager.setCommitteeChairmanPosition(properties["committeeChairmanPosition"] ?: "")
+                settingsManager.setCommissioner1Position(properties["commissioner1Position"] ?: "")
+                settingsManager.setCommissioner2Position(properties["commissioner2Position"] ?: "")
+            }
+        }
 
     }
 
@@ -235,10 +244,14 @@ class MainController: Initializable {
         }
     }
 
-    fun openNewForm(pathToForm: String, formTitle: String) {
+    private fun openNewForm(pathToForm: String, formTitle: String, eventHandler: (HashMap<String, String>) -> Unit) {
         try {
             val loader = FXMLLoader(javaClass.getResource(pathToForm))
             val root: Parent = loader.load()
+
+            root.addEventHandler(ControllerAcceptEvent.ACCEPT_EVENT_TYPE) {
+                eventHandler(it.properties)
+            }
 
             val stage = Stage()
             stage.scene = Scene(root)
