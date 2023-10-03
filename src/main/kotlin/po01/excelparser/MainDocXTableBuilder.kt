@@ -39,14 +39,23 @@ class MainDocXTableBuilder(
         val mainTemplateFileStream = object {}.javaClass.getResourceAsStream("/mainTemplate.docx")
         val mainDoc = XWPFDocument(mainTemplateFileStream)
 
-
-        documentRequisitesReplacer.replace(mainDoc, processType)
+        documentRequisitesReplacer.replace(mainDoc, processType, gradeControls[0].student.name)
 
         val table = mainDoc.tables[0]
 
         var rowIndex = startIndex //index of row in table to insert parsed data
 
-        val upToSemester = wordRowBuilder.getMaxSemester(gradeControls)
+//        val upToSemester = wordRowBuilder.getMaxSemester(gradeControls)
+        val upToSemester = when (targetCourse) {
+            TargetCourse.FIRST -> 1
+            TargetCourse.SECOND -> 2
+            TargetCourse.THIRD -> 3
+            TargetCourse.FOURTH -> 4
+            TargetCourse.FIFTH -> 5
+            TargetCourse.SIXTH -> 6
+            TargetCourse.SEVENTH -> 7
+            TargetCourse.EIGHTH -> 8
+        }
 
         val creditHoursBySemesterNumberInGc: MutableList<Int> = mutableListOf()
         val creditHoursBySemesterNumberInWp: MutableList<Int> = mutableListOf()
@@ -210,6 +219,61 @@ class MainDocXTableBuilder(
 
             rowIndex++
         }
+
+        rowIndex += 3 //shift to program difference insert place
+
+        disciplinesProgramDifference.forEach {
+            val newRow = table.insertNewTableRow(rowIndex)
+
+            for (col in 0 until 5) {
+                val newCell = newRow.createCell()
+                val paragraph = newCell.addParagraph()
+                val run = paragraph.createRun()
+                newCell.removeParagraph(0)
+                run.setText("")
+                run.fontFamily = "Times New Roman"
+                run.fontSize = 10
+                val tc = newCell.ctTc
+                val tcPr = tc.addNewTcPr()
+                val ctDecimalNumber = CTDecimalNumber.Factory.newInstance()
+
+                paragraph.alignment = ParagraphAlignment.LEFT
+
+                when (col)
+                {
+                    0 -> {
+                        run.setText(it.title.trim())
+                        ctDecimalNumber.`val` = BigInteger.valueOf(8)
+                    }
+                    1 -> {
+                        run.setText(it.semesterNumber.toString())
+                        paragraph.alignment = ParagraphAlignment.CENTER
+                        ctDecimalNumber.`val` = BigInteger.valueOf(2)
+                    }
+                    2 -> {
+                        run.setText(it.creditHourQuantity.toInt().toString())
+                        paragraph.alignment = ParagraphAlignment.CENTER
+                        ctDecimalNumber.`val` = BigInteger.valueOf(4)
+                    }
+                    3 -> {
+                        run.setText(it.gradeForm.trim())
+                        paragraph.alignment = ParagraphAlignment.CENTER
+                        ctDecimalNumber.`val` = BigInteger.valueOf(5)
+                    }
+                    4 -> {
+                        run.setText("")
+                        paragraph.alignment = ParagraphAlignment.CENTER
+                        ctDecimalNumber.`val` = BigInteger.valueOf(5)
+                    }
+                }
+                tcPr.gridSpan = ctDecimalNumber
+            }
+
+
+            rowIndex++
+
+        }
+
 
         val programDifferenceDoc = programDifferenceDocXBuilder.build(gradeControls[0].student.name, disciplinesProgramDifference)
 

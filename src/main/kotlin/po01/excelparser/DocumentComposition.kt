@@ -13,14 +13,20 @@ class DocumentComposition(
     val facultyTemplateValue = "FTITLE"
     var facultyActualValue = settingsManager.getFacultyTitle() ?: "не указано"
 
+    val studentFullNameTemplateValue = "STUDENTFULLNAME"
+    val maxStudentFullNameLength = 58
+    val studentShortNameTemplateValue = "STUDENTSHORTNAME"
+    val maxStudentShortNameLength = 28
+
     val processTypeTemplateValue = "PROCESSTYPE"
+    val maxProcessTypeLength = 79
     var processTypeActualValue = "что то пошло не так_________________________________________________"
 
     fun setProcessTypeActualValue(type: StudentProcess) {
         processTypeActualValue = when (type) {
-            StudentProcess.WithdrawalFromLeaveOfAbsence -> "________________выходе из академического отпуска_______________"
-            StudentProcess.Transfer -> "__________________________переводе_____________________________"
-            StudentProcess.Reinstatement -> "_________________________восстановлении________________________"
+            StudentProcess.WithdrawalFromLeaveOfAbsence -> "выходе из академического отпуска"
+            StudentProcess.Transfer -> "переводе"
+            StudentProcess.Reinstatement -> "восстановлении"
         }
     }
 
