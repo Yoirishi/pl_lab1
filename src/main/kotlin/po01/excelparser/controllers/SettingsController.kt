@@ -13,11 +13,14 @@ import po01.excelparser.events.ControllerAcceptEvent
 import java.net.URL
 import java.util.*
 
-class ProtocolSettingsController: Initializable {
+class SettingsController: Initializable {
 
 
     @FXML
-    lateinit var facultyNameTextField: TextField
+    lateinit var facultyFullNameTextField: TextField
+
+    @FXML
+    lateinit var facultyShortNameTextField: TextField
 
     @FXML
     lateinit var commissioner1PositionTextField: TextField
@@ -46,7 +49,8 @@ class ProtocolSettingsController: Initializable {
     @FXML
     fun handleAccept(event: ActionEvent) {
         val properties = HashMap<String, String>()
-        properties["facultyName"] = facultyNameTextField.text
+        properties["facultyFullName"] = facultyFullNameTextField.text
+        properties["facultyShortName"] = facultyShortNameTextField.text
         properties["committeeChairmanPosition"] = committeeChairmanPositionTextField.text
         properties["commissioner1Position"] = commissioner1PositionTextField.text
         properties["commissioner2Position"] = commissioner2PositionTextField.text
@@ -57,7 +61,8 @@ class ProtocolSettingsController: Initializable {
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         val settingsManager = beanContext.getBean(SettingsManager::class.java)
-        facultyNameTextField.text = settingsManager.getFacultyTitle() ?: ""
+        facultyFullNameTextField.text = settingsManager.getFacultyFullTitle() ?: ""
+        facultyShortNameTextField.text = settingsManager.getFacultyShortTitle() ?: ""
         commissioner1PositionTextField.text = settingsManager.getCommissioner1Position() ?: ""
         commissioner2PositionTextField.text = settingsManager.getCommissioner2Position() ?: ""
         committeeChairmanPositionTextField.text = settingsManager.getCommitteeChairmanPosition() ?: ""

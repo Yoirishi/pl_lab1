@@ -24,7 +24,8 @@ class MainDocXTableBuilder(
     private val gradeResultValidator: GradeResultValidator,
     private val disciplineNotFacultativeValidator: DisciplineNotFacultativeValidator,
     private val creditHoursValidator: CreditHoursValidator,
-    private val programDifferenceDocXBuilder: ProgramDifferenceDocXBuilder
+    private val programDifferenceDocXBuilder: ProgramDifferenceDocXBuilder,
+    private val annexOfLoABuilder: AnnexOfLoABuilder
 ) {
     private val startIndex = 17
 
@@ -276,6 +277,13 @@ class MainDocXTableBuilder(
 
 
         val programDifferenceDoc = programDifferenceDocXBuilder.build(gradeControls[0].student.name, disciplinesProgramDifference)
+        val annexOfLoADoc = annexOfLoABuilder.build(
+            gradeControls[0].student.name,
+            gradeControls[0].student.group,
+            upToSemester,
+            creditHoursBySemesterNumberInWp,
+            creditHoursBySemesterNumberInGc
+        )
 
         val finalOutputFolder = if (outputFolderPath.endsWith("/")) {
             outputFolderPath.substring(0, outputFolderPath.length-2)
@@ -290,6 +298,10 @@ class MainDocXTableBuilder(
         val pdOut = FileOutputStream("${finalOutputFolder}/Аннотированный ИУП ${splitStudentName[0]}.docx")
         programDifferenceDoc.write(pdOut)
         pdOut.close()
+
+        val annexOut = FileOutputStream("${finalOutputFolder}/Приложение к выходу ${splitStudentName[0]}.docx")
+        annexOfLoADoc.write(annexOut)
+        annexOut.close()
 
         mainTemplateFileStream?.close()
         mainDoc.close()

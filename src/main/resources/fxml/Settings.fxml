@@ -3,30 +3,36 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="po01.excelparser.controllers.ProtocolSettingsController">
+<AnchorPane prefHeight="410.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="po01.excelparser.controllers.SettingsController">
    <children>
       <VBox layoutX="36.0" layoutY="30.0" prefHeight="30.0" prefWidth="506.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
          <children>
-            <Label text="Название факультета" />
-            <TextField fx:id="facultyNameTextField" />
+            <Label text="Название факультета (полное)" />
+            <TextField fx:id="facultyFullNameTextField" />
          </children>
       </VBox>
-      <VBox layoutX="36.0" layoutY="220.0" prefHeight="30.0" prefWidth="506.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+      <VBox layoutX="20.0" layoutY="283.0" prefHeight="30.0" prefWidth="506.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
          <children>
             <Label text="Должность члена комиссии 2" />
             <TextField fx:id="commissioner2PositionTextField" />
          </children>
       </VBox>
-      <VBox layoutX="36.0" layoutY="158.0" prefHeight="30.0" prefWidth="506.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+      <VBox layoutX="20.0" layoutY="221.0" prefHeight="30.0" prefWidth="506.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
          <children>
             <Label text="Должность члена комиссии 1" />
             <TextField fx:id="commissioner1PositionTextField" />
          </children>
       </VBox>
-      <VBox layoutX="36.0" layoutY="92.0" prefHeight="30.0" prefWidth="506.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+      <VBox layoutX="20.0" layoutY="160.0" prefHeight="30.0" prefWidth="506.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
          <children>
             <Label text="Должность председателя комиссии" />
             <TextField fx:id="committeeChairmanPositionTextField" />
+         </children>
+      </VBox>
+      <VBox layoutX="20.0" layoutY="105.0" prefHeight="42.0" prefWidth="560.0">
+         <children>
+            <Label text="Название факультета (краткое)" />
+            <TextField fx:id="facultyShortNameTextField" />
          </children>
       </VBox>
       <HBox layoutX="354.0" layoutY="279.0" prefHeight="42.0" prefWidth="580.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">

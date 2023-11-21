@@ -43,19 +43,10 @@
          <children>
             <MenuBar layoutX="41.0" layoutY="2.0" AnchorPane.bottomAnchor="375.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <menus>
-                <Menu mnemonicParsing="false" text="Файл" />
                 <Menu mnemonicParsing="false" text="Настройки">
                   <items>
                     <MenuItem fx:id="disciplineDictionaryMenuItem" mnemonicParsing="false" text="Сопоставление дисциплин" />
-                        <MenuItem fx:id="disciplineDictionaryMenuItem1" mnemonicParsing="false" text="Настройки генератора" />
-                        <MenuItem fx:id="protocolSettingsMenuItem" mnemonicParsing="false" text="Настройки шаблона ПЗК" />
-                        <MenuItem mnemonicParsing="false" text="Настройки шаблона ИУП" />
-                    <MenuItem mnemonicParsing="false" text="Настройки шаблона приложения" />
-                  </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Помощь">
-                  <items>
-                    <MenuItem mnemonicParsing="false" text="About" />
+                        <MenuItem fx:id="settingsMenuItem" mnemonicParsing="false" text="Сопоставление переменных" />
                   </items>
                 </Menu>
               </menus>
@@ -79,6 +70,18 @@
                      <children>
                         <Label text="Процесс" />
                         <ComboBox fx:id="processComboBox" prefWidth="150.0" />
+                     </children>
+                  </VBox>
+                  <VBox layoutX="325.0" layoutY="120.0" prefHeight="51.0" prefWidth="251.0">
+                     <children>
+                        <Label text="Код специальности" />
+                        <TextField fx:id="groupCodeTextField" />
+                     </children>
+                  </VBox>
+                  <VBox layoutX="325.0" layoutY="176.0" prefHeight="51.0" prefWidth="251.0">
+                     <children>
+                        <Label text="Полное название специальности" />
+                        <TextField fx:id="groupFullTitleTextField" />
                      </children>
                   </VBox>
                </children>

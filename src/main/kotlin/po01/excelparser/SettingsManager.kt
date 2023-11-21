@@ -18,10 +18,14 @@ class SettingsManager {
     private var openDirectoryAfterGeneratingCheckboxValue: String? = null
     private val settingsFile = File("settings.ini")
 
-    private var facultyTitle: String? = null
+    private var facultyFullTitle: String? = null
+    private var facultyShortTitle: String? = null
     private var committeeChairmanPosition: String? = null
     private var commissioner1Position: String? = null
     private var commissioner2Position: String? = null
+
+    private var groupCode: String? = null
+    private var groupFullTitle: String? = null
 
 
     init {
@@ -38,10 +42,15 @@ class SettingsManager {
             parsePracticeWithMainWPCheckboxValue = properties.getProperty("parsePracticeWithMainWPCheckboxValue")
             openDirectoryAfterGeneratingCheckboxValue = properties.getProperty("openDirectoryAfterGeneratingCheckboxValue")
 
-            facultyTitle = properties.getProperty("facultyTitle")
+            facultyFullTitle = properties.getProperty("facultyFullTitle")
+            facultyShortTitle = properties.getProperty("facultyShortTitle")
             committeeChairmanPosition = properties.getProperty("committeeChairmanPosition")
             commissioner1Position = properties.getProperty("commissioner1Position")
             commissioner2Position = properties.getProperty("commissioner2Position")
+
+
+            groupCode = properties.getProperty("groupCode")
+            groupFullTitle = properties.getProperty("groupFullTitle")
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -81,10 +90,14 @@ class SettingsManager {
         properties.setProperty("parsePracticeWithMainWPCheckboxValue", parsePracticeWithMainWPCheckboxValue ?: "")
 
 
-        properties.setProperty("facultyTitle", facultyTitle ?: "")
+        properties.setProperty("facultyFullTitle", facultyFullTitle ?: "")
+        properties.setProperty("facultyShortTitle", facultyShortTitle ?: "")
         properties.setProperty("committeeChairmanPosition", committeeChairmanPosition ?: "")
         properties.setProperty("commissioner1Position", commissioner1Position ?: "")
         properties.setProperty("commissioner2Position", commissioner2Position ?: "")
+
+        properties.setProperty("groupCode", groupCode ?: "")
+        properties.setProperty("groupFullTitle", groupFullTitle ?: "")
 
         return try {
             FileOutputStream(settingsFile).use { fileOutputStream ->
@@ -122,14 +135,21 @@ class SettingsManager {
 
 
 
-    fun getFacultyTitle(): String? = facultyTitle
+    fun getFacultyFullTitle(): String? = facultyFullTitle
+    fun getFacultyShortTitle(): String? = facultyShortTitle
     fun getCommitteeChairmanPosition(): String? = committeeChairmanPosition
     fun getCommissioner1Position(): String? = commissioner1Position
     fun getCommissioner2Position(): String? = commissioner2Position
 
 
-    fun setFacultyTitle(facultyTitle: String) {
-        this.facultyTitle = facultyTitle
+    fun setFacultyFullTitle(facultyTitle: String) {
+        this.facultyFullTitle = facultyTitle
+        val result = saveSettings()
+        println(result)
+    }
+
+    fun setFacultyShortTitle(facultyTitle: String) {
+        this.facultyShortTitle = facultyTitle
         val result = saveSettings()
         println(result)
     }
@@ -148,6 +168,21 @@ class SettingsManager {
 
     fun setCommissioner2Position(commissioner2Position: String) {
         this.commissioner2Position = commissioner2Position
+        val result = saveSettings()
+        println(result)
+    }
+
+    fun getGroupCode(): String? = groupCode
+    fun getGroupFullTitle(): String? = groupFullTitle
+
+    fun setGroupCode(groupCode: String) {
+        this.groupCode = groupCode
+        val result = saveSettings()
+        println(result)
+    }
+
+    fun setGroupFullTitle(groupFullTitle: String) {
+        this.groupFullTitle = groupFullTitle
         val result = saveSettings()
         println(result)
     }

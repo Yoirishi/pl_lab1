@@ -14,6 +14,7 @@ import javafx.scene.control.Button
 import javafx.scene.control.CheckBox
 import javafx.scene.control.ComboBox
 import javafx.scene.control.MenuItem
+import javafx.scene.control.TextField
 import javafx.stage.Stage
 import javafx.util.StringConverter
 import po01.excelparser.ExcelParser
@@ -67,7 +68,14 @@ class MainController: Initializable {
     lateinit var processComboBox: ComboBox<StudentProcess>
 
     @FXML
-    lateinit var protocolSettingsMenuItem: MenuItem
+    lateinit var settingsMenuItem: MenuItem
+
+    @FXML
+    lateinit var groupCodeTextField: TextField
+
+    @FXML
+    lateinit var groupFullTitleTextField: TextField
+
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         gcPicker.setFilePurposeText("Аттестационный лист студента")
@@ -201,16 +209,28 @@ class MainController: Initializable {
             }
         }
 
-        protocolSettingsMenuItem.setOnAction {
-            openNewForm("/fxml/ProtocolSettings.fxml" ,"Настройки генерации протокола") { properties ->
+        settingsMenuItem.setOnAction {
+            openNewForm("/fxml/Settings.fxml" ,"Настройки генерации протокола") { properties ->
                 val settingsManager = beanContext.getBean(SettingsManager::class.java)
-                settingsManager.setFacultyTitle(properties["facultyName"] ?: "")
+                settingsManager.setFacultyFullTitle(properties["facultyFullName"] ?: "")
+                settingsManager.setFacultyShortTitle(properties["facultyShortName"] ?: "")
                 settingsManager.setCommitteeChairmanPosition(properties["committeeChairmanPosition"] ?: "")
                 settingsManager.setCommissioner1Position(properties["commissioner1Position"] ?: "")
                 settingsManager.setCommissioner2Position(properties["commissioner2Position"] ?: "")
             }
         }
 
+        groupCodeTextField.text = settingsManager.getGroupCode()
+        groupFullTitleTextField.text = settingsManager.getGroupFullTitle()
+
+
+        groupCodeTextField.textProperty().addListener { _, _, newValue ->
+            settingsManager.setGroupCode(newValue.trim())
+        }
+
+        groupFullTitleTextField.textProperty().addListener { _, _, newValue ->
+            settingsManager.setGroupFullTitle(newValue.trim())
+        }
     }
 
     private fun showErrorDialog(errorMessage: String) {

@@ -11,7 +11,7 @@ class DocumentComposition(
 ) {
     lateinit var commissioners: List<Commissioner>
     val facultyTemplateValue = "FTITLE"
-    var facultyActualValue = settingsManager.getFacultyTitle() ?: "не указано"
+    var facultyActualValue = settingsManager.getFacultyShortTitle() ?: "не указано"
 
     val studentFullNameTemplateValue = "STUDENTFULLNAME"
     val maxStudentFullNameLength = 58
@@ -49,7 +49,7 @@ class DocumentComposition(
                 settingsManager.getCommissioner2Position() ?: "не указано"
             )
         )
-        facultyActualValue = settingsManager.getFacultyTitle() ?: "не указано"
+        facultyActualValue = settingsManager.getFacultyShortTitle() ?: "не указано"
     }
 
 }
